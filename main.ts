@@ -1,6 +1,8 @@
 // The Excuse My Agent Gave Me — entry program.
 // Writes one excuse line from an AI agent to its human to /output/entry.txt.
 // Node 22, stdlib only, deterministic, no network, no secrets.
+// Revision 1: clarified the header and renamed the output-dir binding
+// to read as what it is (the directory that receives entry.txt).
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -13,6 +15,12 @@ import { join } from "node:path";
 const LINE =
   "Sorry — the API failed once, so I retried with exponential backoff, and by the time my next attempt came due, the deadline had retired and moved to Florida.";
 
-const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
-mkdirSync(outDir, { recursive: true });
-writeFileSync(join(outDir, "entry.txt"), LINE, "utf8");
+// Revision 2: the output step is now a named helper, and the output-dir
+// binding reads as outputDir; the written bytes are unchanged.
+function writeEntry(line: string, outputDir: string): void {
+  mkdirSync(outputDir, { recursive: true });
+  writeFileSync(join(outputDir, "entry.txt"), line, "utf8");
+}
+
+const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
+writeEntry(LINE, outputDir);
